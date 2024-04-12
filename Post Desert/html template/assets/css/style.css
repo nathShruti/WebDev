@@ -138,6 +138,24 @@ img{
     top: -36px;
 }
 
+/* .trans-img {
+    position: relative;
+}
+
+.trans-img img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+} */
+
+#trans-text {
+    background: url('../img/1616275320269\ \(2\).jpg');
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    /* background-color: transparent oklab(from color l a b); */
+}
+
 .bg-img-order {
     /* width: 15%; */
     position: relative;
