@@ -3,16 +3,15 @@ import ImgDesc from "./CityDesc";
 import CityDeets from "./CityDet";
 import Extras from "./CityExtra";
 import CityTemp from "./CityTemp";
-import Forecast from "./Forecast";
 import WeatherHead from "./Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Forecast from "./Forecast/Forecast";
 
 
 function Page() {
   const location = useLocation();
   const [weatherData, setWeatherData] = useState({});
-  console.log(location);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,7 +54,7 @@ function Page() {
           <CityTemp weatherData={weatherData} className="w-2/4"></CityTemp>
           <Extras weatherData={weatherData} className="w-2/4"></Extras>
         </div>
-        <Forecast></Forecast>
+        <Forecast weatherData={weatherData}/>
       </div>
     </div>
   );

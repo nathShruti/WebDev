@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
-import './Search.css';
-import { Axios } from 'axios';
+import React, { useContext, useEffect, useState } from "react";
+import "./Search.css";
+import axios from "axios";
+import { SearchContext } from "./context";
 
+export default function SearchBar() {
+    const { setSearchedCities } = useContext(SearchContext);
+    const [search, setSearch] = useState("");
 
-    
-export default function SearchBar () {
+    const handleChange = (e) => {
+        setSearch(e.target.value);
+    };
 
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-  ]
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            try {
+                const res = await axios.get(
+                    `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?where=name%20like%20%22${search}%22`
+                );
+                setSearchedCities(res.data.results);
+            } catch (err) {
+                console.error(err);
+            }
+        }, 1300);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [search]);
 
-  // const [list, setList] = useState([]);
-
-  // const options = async() => {
-  //   try {
-  //     const data = await Axios.get('https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?limit=20')
-  //     setList(data.data.results);
-  //   } catch (error){
-  //     console.log(error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   options();
-  // }, [])
-  // console.log(options);
-
-  return (
-    <>
-    <div className='flex justify-center gap-x-3 py-2 bg-black'>
-      <Select
-        className="basic-single w-6/12"
-        classNamePrefix="select"
-        defaultValue={options[0]}
-        name="data"
-        options={options}
-      />
-      <button className='search-btn '>Search</button>
-    </div>
-    </>
-  );
-};
+    return (
+        <>
+            <div className='py-2 bg-black'>
+                <input
+                    type='text'
+                    value={search}
+                    onChange={(e) => {
+                        handleChange(e);
+                    }}
+                />
+            </div>
+        </>
+    );
+}

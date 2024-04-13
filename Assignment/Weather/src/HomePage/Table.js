@@ -1,97 +1,83 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, Typography } from "@material-tailwind/react";
-import Axios from 'axios'; 
+import React, { useContext, useEffect, useState } from "react";
+import { Typography } from "@material-tailwind/react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { render } from "react-dom";
-// import Loader from "./Loader";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { SearchContext } from "./context";
 
 const TABLE_HEAD = ["CITY", "COUNTRY", "TIME ZONE"];
- 
+
 export function DefaultTable() {
-  const [list, setList] = useState([]);
+    const { searchedCities } = useContext(SearchContext);
+    const navigate = useNavigate();
+    const [cities, setCities] = useState([]);
+    const [index, setIndex] = useState(2);
+    const [hasMore, setHasMore] = useState(true);
 
-  const navigate = useNavigate();
+    const fetchMoreData = () => {
+        axios
+            .get(
+                `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?order_by=name&limit=20&offset=${
+                    index * 2
+                }0`
+            )
+            .then((res) => {
+                setCities((prev) => [...prev, ...res.data.results]);
+                res.data.results.length > 0 ? setHasMore(true) : setHasMore(false);
+            })
+            .catch((err) => console.error(err));
+        setIndex((prev) => prev + 1);
+    };
 
-  const options = async() => {
-    try {
-      const data = await Axios.get('https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?limit=100')
-      setList(data.data.results);
-    } catch (error){
-      console.log(error);
-    }
-  }
+    useEffect(() => {
+        if (searchedCities && searchedCities.length > 0) {
+            setCities(searchedCities);
+            setHasMore(false);
+        } else {
+            axios
+                .get(
+                    "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/geonames-all-cities-with-a-population-1000/records?order_by=name&limit=20"
+                )
+                .then((res) => {
+                    setCities(res.data.results);
+                    setHasMore(true);
+                })
+                .catch((err) => console.error(err));
+        }
+    }, [searchedCities]);
 
-  useEffect(() => {
-    options();
-  }, [])
-
-
-
-  return (
-    <div className="m-10" >
-    <Card className="h-80 w-full border-2 overflow-y-scroll rounded-xl border-black">
-      <table className="w-full min-w-max table-auto text-left">
-        <thead>
-          <tr>
-            {TABLE_HEAD.map((head) => (
-              <th
-                key={head}
-                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 "
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="leading-none font-bold"
-                >
-                  {head}
-                </Typography>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {list.map((item, index) => {
-            const isLast = index === list.length - 1;
-            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
- 
-            return (
-              <tr key={index}>
-                <td className={classes}>
-                <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                    onClick={() => navigate("/page", {state: item})}
-                  >
-                    {item.name}
-                  </Typography>
-                  
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {item.cou_name_en}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {item.timezone}
-                  </Typography>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </Card>
-    </div>
-  );
+    return (
+        <div className='w-4/5 m-auto relative'>
+            <div className='grid grid-cols-3 relative'>
+                {TABLE_HEAD.map((head) => (
+                    <div key={head} className='bg-cyan-700 py-4'>
+                        <Typography className='font-bold text-white'>{head}</Typography>
+                    </div>
+                ))}
+            </div>
+            <div className='h-96 overflow-y-auto' id='scrollableDiv'>
+                <InfiniteScroll
+                    className='h-full flex flex-col'
+                    dataLength={cities.length}
+                    next={fetchMoreData}
+                    hasMore={hasMore}
+                    loader={<h4>Loading...</h4>}
+                    scrollableTarget='scrollableDiv'>
+                    {cities.map((item) => (
+                        <div key={item.geoname_id} className='grid grid-cols-3 py-2'>
+                            <Typography
+                                className='flex-auto'
+                                onClick={() => {
+                                    navigate("/page", { state: item });
+                                }}>
+                                {item.name}
+                            </Typography>
+                            <Typography className='flex-auto'>{item.cou_name_en}</Typography>
+                            <Typography className='flex-auto'>{item.timezone}</Typography>
+                        </div>
+                    ))}
+                </InfiniteScroll>
+            </div>
+        </div>
+    );
 }
