@@ -33,6 +33,7 @@ export default function SearchBar() {
                 <input
                     type='text'
                     value={search}
+                    className="w-2/5"
                     onChange={(e) => {
                         handleChange(e);
                     }}

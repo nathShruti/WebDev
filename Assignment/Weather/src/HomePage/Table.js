@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { SearchContext } from "./context";
+import './Table.css';
 
 const TABLE_HEAD = ["CITY", "COUNTRY", "TIME ZONE"];
 
@@ -47,10 +48,10 @@ export function DefaultTable() {
     }, [searchedCities]);
 
     return (
-        <div className='w-4/5 m-auto relative'>
-            <div className='grid grid-cols-3 relative'>
+        <div className='w-full justify-center'>
+            <div className='grid grid-cols-3'>
                 {TABLE_HEAD.map((head) => (
-                    <div key={head} className='bg-cyan-700 py-4'>
+                    <div key={head} className='bg-slate-500 py-4'>
                         <Typography className='font-bold text-white'>{head}</Typography>
                     </div>
                 ))}
@@ -64,16 +65,16 @@ export function DefaultTable() {
                     loader={<h4>Loading...</h4>}
                     scrollableTarget='scrollableDiv'>
                     {cities.map((item) => (
-                        <div key={item.geoname_id} className='grid grid-cols-3 py-2'>
+                        <div key={item.geoname_id} className='table-rows grid grid-cols-3'>
                             <Typography
-                                className='flex-auto'
+                                className='table-text flex-auto'
                                 onClick={() => {
                                     navigate("/page", { state: item });
                                 }}>
                                 {item.name}
                             </Typography>
-                            <Typography className='flex-auto'>{item.cou_name_en}</Typography>
-                            <Typography className='flex-auto'>{item.timezone}</Typography>
+                            <Typography className='table-text flex-auto'>{item.cou_name_en}</Typography>
+                            <Typography className='table-text flex-auto'>{item.timezone}</Typography>
                         </div>
                     ))}
                 </InfiniteScroll>

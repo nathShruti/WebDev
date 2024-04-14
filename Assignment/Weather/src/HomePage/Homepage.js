@@ -6,7 +6,7 @@ import { DefaultTable } from "./Table";
 export default function Homepage() {
   return (
     <SearchContextProvider>
-      <div className="App font-kanit-regular">
+      <div className="App home font-kanit-regular">
         <Example></Example>
         <SearchBar></SearchBar>
         <DefaultTable></DefaultTable>

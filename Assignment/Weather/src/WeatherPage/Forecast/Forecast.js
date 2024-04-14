@@ -39,7 +39,7 @@ export default function Forecast({ weatherData }) {
   return (
     <div className="p-5 text-4xl items-center text-white justify-stretch w-auto h-auto">
       <div className=" flex flex-row items-center gap-3 my-3">
-        <h2 className="tracking-wide text-bold mx-10">DAILY FORECAST</h2>
+        <h2 className="tracking-wide text-bold mx-10">HOURLY FORECAST</h2>
         <ThreeDots
           visible={loader}
           height="40"

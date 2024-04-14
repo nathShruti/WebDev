@@ -45,12 +45,12 @@ function Page() {
       : weatherData?.weather[0]?.main == 'Tornado' ? 'bg-tornado'
       : weatherData?.weather[0]?.main == 'Clear' ? 'bg-clear'
       : "bg-black"))}>
-        <WeatherHead></WeatherHead>
-        <div className="flex w-full justify-between">
+        <WeatherHead />
+        <div className="block w-full justify-between">
           <CityDeets weatherData={weatherData} countryName={location.state.cou_name_en} className="w-2/4"></CityDeets>
           <ImgDesc weatherData={weatherData} className="w-2/4"></ImgDesc>
         </div>
-        <div className="flex w-full justify-between">
+        <div className="block w-full justify-between">
           <CityTemp weatherData={weatherData} className="w-2/4"></CityTemp>
           <Extras weatherData={weatherData} className="w-2/4"></Extras>
         </div>
